@@ -99,6 +99,19 @@ server.put('/api/marketplaces/:id', async (req, res) => {
   }
 });
 
+server.delete('/api/marketplaces/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await Marketplaces.findByIdAndDelete(id);
+
+    return res.json({ success: true });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).send(e);
+  }
+});
+
 server.use('*', (req, res) => {
   return res.status(404).json({ error: 'Route not found' });
 });
