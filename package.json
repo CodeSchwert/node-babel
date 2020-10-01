@@ -19,6 +19,7 @@
     "jest": "^26.4.2",
     "mongodb": "^3.6.2",
     "mongoose": "^5.10.7",
+    "morgan": "^1.10.0",
     "rimraf": "^3.0.2"
   },
   "devDependencies": {
