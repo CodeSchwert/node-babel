@@ -8,7 +8,7 @@ const opts = {
 
 export const connect = () => {
   // connect to mongoDB with mongoose
-  mongoose.connect('mongodb://localhost:27017/bookAPI', opts, (err) => {
+  mongoose.connect('mongodb://localhost:27017/bazaarAPI', opts, (err) => {
     if (err) {
       return console.error(err);
     }
