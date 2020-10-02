@@ -3,6 +3,7 @@ import morgan from 'morgan';
 import { connect } from './database';
 import exampleRouter from './routers/exampleRouter';
 import marketplacesRouter from './routers/marketplacesRouter';
+import errorHandler from './middleware/errorHandler';
 // import Marketplaces from './models/marketplaceModel';
 
 connect();
@@ -18,6 +19,8 @@ server.use('/api/marketplaces', marketplacesRouter);
 server.use('*', (req, res) => {
   return res.status(404).json({ error: 'Route not found' });
 });
+
+server.use(errorHandler);
 
 server.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
