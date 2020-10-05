@@ -4,8 +4,7 @@ const marketplaceRouter = (Router, Marketplaces) => {
   router.get('/', async (req, res, next) => {
     try {
       const marketplaces = await Marketplaces.find({});
-      console.log(marketplaces); // should be an array of objectsbooks
-      
+      console.log(marketplaces); // should be an array of objects books
       return res.json(marketplaces);
     } catch (e) {
       next(e);

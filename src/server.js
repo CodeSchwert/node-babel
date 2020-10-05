@@ -2,6 +2,7 @@ import express, { Router } from 'express';
 import morgan from 'morgan';
 import { connect } from './database';
 import exampleRouter from './routers/exampleRouter';
+import authRouter from './routers/authRouter';
 import marketplacesRouter from './routers/marketplacesRouter';
 import errorHandler from './middleware/errorHandler';
 import Marketplaces from './models/marketplaceModel';
@@ -13,6 +14,7 @@ const server = express();
 
 server.use(express.json());
 server.use(morgan('dev'));
+server.use('/auth', authRouter);
 server.use('/api', exampleRouter);
 server.use('/api/marketplaces', marketplacesRouter(Router, Marketplaces));
 
