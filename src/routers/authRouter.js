@@ -1,24 +1,17 @@
 import { Router } from 'express';
 import argon2 from 'argon2';
 import User from '../models/userModel';
+import registerSchema from '../validation/authRegisterUser';
 
 const router = Router();
 
 router.post('/register', async (req, res, next) => {
   try {
     const { body } = req;
-    console.log(body);
+    const validValues = await registerSchema.validateAsync(body);
+    console.log('validValues:', validValues);
 
-    if (
-      !body.hasOwnProperty('username') ||
-      !body.hasOwnProperty('email') ||
-      !body.hasOwnProperty('password')
-    ) {
-      return res.status(400).json({ 
-        error: 'Username, email, password required!' 
-      });
-    }
-    const { username, email, password } = body;
+    const { username, email, password } = validValues;
 
     const checkUsername = await User.findOne({ username });
     if (checkUsername) {
@@ -38,6 +31,11 @@ router.post('/register', async (req, res, next) => {
 
     return res.status(201).json({ success: true });
   } catch (e) {
+    // catch custom validation errors
+    if (e.message.startsWith('Invalid')) {
+      return res.status(400).json({ error: e.message });
+    }
+
     next(e);
   }
 });
