@@ -63,3 +63,5 @@ typings/
 .next
 
 dist
+
+src/certs/jwtRS256*
