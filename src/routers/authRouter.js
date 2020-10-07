@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import { Router } from 'express';
 import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
@@ -6,6 +8,12 @@ import registerSchema from '../validation/authRegisterUser';
 import loginSchema from '../validation/authLoginUser';
 
 const SECRET = process.env.SECRET;
+
+const privateCertPath = path.join(__dirname, '../certs/jwtRS256.key');
+if (!fs.existsSync(privateCertPath)) {
+  throw new Error('Could not find RS256 private key!!!');
+}
+const privateKey = fs.readFileSync(privateCertPath);
 
 const router = Router();
 
@@ -66,10 +74,7 @@ router.post('/login', async (req, res, next) => {
       return res.status(400).json({ error: 'Incorrect password!!' });
     }
 
-    const header = {
-      alg: "HS256",
-      typ: "JWT"
-    };
+    const opts = { algorithm: 'RS256' };
 
     const payload = {
       sub: checkUser._id,
@@ -80,7 +85,7 @@ router.post('/login', async (req, res, next) => {
       }
     };
 
-    const jwtToken = jwt.sign(payload, SECRET);
+    const jwtToken = jwt.sign(payload, privateKey, opts);
     console.log(jwtToken);
 
     return res.status(200).json({

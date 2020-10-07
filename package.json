@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/server.js",
   "scripts": {
-    "build": "rimraf dist && babel -d dist src",
+    "build": "rimraf dist && babel -d dist src && cp -r src/certs dist/",
     "start": "yarn run build && node -r dotenv/config dist/server.js",
     "start:watch": "yarn run build && nodemon --watch src --exec yarn start",
     "test": "echo \"Error: no test specified\" && exit 1",
