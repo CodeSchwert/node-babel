@@ -5,7 +5,7 @@ import User from '../models/userModel';
 import registerSchema from '../validation/authRegisterUser';
 import loginSchema from '../validation/authLoginUser';
 
-const SECRET = 'Supercalifragilisticexpialidocious';
+const SECRET = process.env.SECRET;
 
 const router = Router();
 
