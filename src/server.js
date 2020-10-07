@@ -8,7 +8,7 @@ import errorHandler from './middleware/errorHandler';
 import Marketplaces from './models/marketplaceModel';
 
 connect();
-
+console.log(process.env.PORT, process.env.SECRET);
 const PORT = 5000;
 const server = express();
 

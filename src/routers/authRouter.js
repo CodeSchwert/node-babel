@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import User from '../models/userModel';
 import registerSchema from '../validation/authRegisterUser';
 import loginSchema from '../validation/authLoginUser';
-
+console.log(process.env.PORT, process.env.SECRET);
 const SECRET = 'Supercalifragilisticexpialidocious';
 
 const router = Router();

@@ -5,7 +5,7 @@
   "main": "src/server.js",
   "scripts": {
     "build": "rimraf dist && babel -d dist src",
-    "start": "yarn run build && node dist/server.js",
+    "start": "yarn run build && node -r dotenv/config dist/server.js",
     "start:watch": "yarn run build && nodemon --watch src --exec yarn start",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "yarn run start:watch"
@@ -16,6 +16,7 @@
   "dependencies": {
     "@types/jest": "^26.0.14",
     "argon2": "^0.27.0",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "jest": "^26.4.2",
     "joi": "^17.2.1",
