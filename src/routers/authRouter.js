@@ -1,9 +1,11 @@
 import { Router } from 'express';
 import argon2 from 'argon2';
-import { v4 as uuidv4 } from 'uuid';
+import jwt from 'jsonwebtoken';
 import User from '../models/userModel';
 import registerSchema from '../validation/authRegisterUser';
 import loginSchema from '../validation/authLoginUser';
+
+const SECRET = 'Supercalifragilisticexpialidocious';
 
 const router = Router();
 
@@ -64,14 +66,26 @@ router.post('/login', async (req, res, next) => {
       return res.status(400).json({ error: 'Incorrect password!!' });
     }
 
-    const token = uuidv4();
+    const header = {
+      alg: "HS256",
+      typ: "JWT"
+    };
 
-    checkUser.token = token;
-    await checkUser.save();
+    const payload = {
+      sub: checkUser._id,
+      name: checkUser.username,
+      data: {
+        owner: [],
+        admin: []
+      }
+    };
+
+    const jwtToken = jwt.sign(payload, SECRET);
+    console.log(jwtToken);
 
     return res.status(200).json({
       success: true,
-      token
+      jwtToken
     });
   } catch (e) {
     // catch custom validation errors
