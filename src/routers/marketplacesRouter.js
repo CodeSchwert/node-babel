@@ -1,12 +1,12 @@
+import authMiddleware from '../middleware/authMiddleware';
+
 const marketplaceRouter = (Router, Marketplaces) => {
   const router = Router();
 
   router.get('/', async (req, res, next) => {
     try {
       const marketplaces = await Marketplaces.find({});
-      
-      console.log(marketplaces); // should be an array of objects markets
-      console.log(req.headers);
+      // console.log(marketplaces); // should be an array of objects markets
 
       return res.json(marketplaces);
     } catch (e) {
