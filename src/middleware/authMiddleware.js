@@ -1,36 +1,38 @@
-import fs from 'fs';
-import path from 'path';
 import jwt from 'jsonwebtoken';
 
-const publicCertPath = path.join(__dirname, '../certs/jwtRS256.key.pub');
-if (!fs.existsSync(publicCertPath)) {
-  throw new Error('Could not find RS256 public key!!!');
-}
-const publicKey = fs.readFileSync(publicCertPath);
-
-module.exports = () => {
-  const authMiddleware = (req, res, next) => {
+export default (Users, publicKey) => {
+  const authMiddleware = async (req, res, next) => {
     try {
-      console.log(req.headers);
-
       const { authorization } = req.headers;
   
       // 1. check for authorization header
       if (!authorization) {
-        return res.status(400).json({ error: 'Authorization header required!' });
+        return res.status(401).json({
+          error: 'Authorization header required!'
+        });
       }
       // 2. check the Bearer string format
       if (!authorization.startsWith('Bearer ')) {
-        return res.status(400).json({ error: 'Invalid authorization bearer string!' });
+        return res.status(401).json({
+          error: 'Invalid authorization bearer string!'
+        });
       }
   
       // 3. grab the token
       const token = authorization.split(' ')[1];
-      // console.log(token);
   
       // 4. verify token
       const payload = jwt.verify(token, publicKey);
-      console.log(payload);
+
+      // 5. check the user exists in the database
+      const verifiedUser = await Users.findById(payload.sub, { password: 0 });
+      if (!Boolean(verifiedUser)) {
+        return res.status(404).json({ error: 'User not found!' });
+      }
+
+      // attach user and payload for next request handlers
+      req.verifiedUser = verifiedUser;
+      req.jwtPayload = payload;
 
       next();
     } catch (e) {

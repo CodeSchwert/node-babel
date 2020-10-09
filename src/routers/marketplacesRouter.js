@@ -1,10 +1,11 @@
-import authMiddleware from '../middleware/authMiddleware';
-
 const marketplaceRouter = (Router, Marketplaces) => {
   const router = Router();
 
   router.get('/', async (req, res, next) => {
     try {
+      console.log(req.verifiedUser);
+      console.log(req.jwtPayload);
+
       const marketplaces = await Marketplaces.find({});
       // console.log(marketplaces); // should be an array of objects markets
 
