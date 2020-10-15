@@ -1,5 +1,13 @@
 import jwt from 'jsonwebtoken';
 
+const checkDateTime = (iat) => {
+  const thirtyDays = 30 * 86400000;
+  const currentTime = new Date().getTime();
+  const iat30days = new Date((iat * 1000) + thirtyDays).getTime();
+
+  return iat30days >= currentTime;
+};
+
 export default (Users, publicKey) => {
   const authMiddleware = async (req, res, next) => {
     try {
@@ -24,7 +32,12 @@ export default (Users, publicKey) => {
       // 4. verify token
       const payload = jwt.verify(token, publicKey);
 
-      // 5. check the user exists in the database
+      // 5. check the token is not too old
+      if (!checkDateTime(payload.iat)) {
+        return res.status(401).json({ error: 'Authorization token expired!' });
+      }
+
+      // 6. check the user exists in the database
       const verifiedUser = await Users.findById(payload.sub, { password: 0 });
       if (!Boolean(verifiedUser)) {
         return res.status(404).json({ error: 'User not found!' });
