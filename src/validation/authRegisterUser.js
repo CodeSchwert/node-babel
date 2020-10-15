@@ -16,7 +16,17 @@ const schema = Joi.object({
   email: Joi.string()
     .email({ minDomainSegments: 2 })
     .required()
-    .error(new Error('Invalid email - must be a valid email address'))
+    .error(new Error('Invalid email - must be a valid email address')),
+
+  firstName: Joi.string()
+    .alphanum()
+    .min(2)
+    .max(50),
+  
+  lastName: Joi.string()
+    .alphanum()
+    .min(2)
+    .max(50)
 });
 
 export default schema;
