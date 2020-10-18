@@ -1,3 +1,5 @@
+import marketplaceCreateSchema from '../validation/marketplaceCreate';
+
 const marketplaceRouter = (Router, Marketplaces) => {
   const router = Router();
 
@@ -6,7 +8,9 @@ const marketplaceRouter = (Router, Marketplaces) => {
       console.log(req.verifiedUser);
       console.log(req.jwtPayload);
 
-      const marketplaces = await Marketplaces.find({});
+      const marketplaces = await Marketplaces
+        .find({}, { __v: false })
+        .populate('owner', '-password -usernameLowercase -__v');
       // console.log(marketplaces); // should be an array of objects markets
 
       return res.json(marketplaces);
@@ -17,26 +21,24 @@ const marketplaceRouter = (Router, Marketplaces) => {
   
   router.post('/', async (req, res, next) => {
     try {
-      const { body } = req;
-      // console.log(body);
+      const { body, verifiedUser, jwtPayload } = req;
   
       // check body properties - name, description, owner
-      if (
-        !body.hasOwnProperty('name') || 
-        !body.hasOwnProperty('description') ||
-        !body.hasOwnProperty('owner')
-      ) {
-        return res.status(400).json({ error: 'Marketplace name, description, owner required' });
-      }
+      const validValues = await marketplaceCreateSchema.validateAsync(body);
+      const { name, description } = validValues;
   
       // check if the marketplace already exists
-      const marketplaceExists = await Marketplaces.findOne({ name: body.name });
+      const marketplaceExists = await Marketplaces.findOne({ name });
       if (marketplaceExists != null) {
         return res.status(400).json({ error: 'Marketplace name already in use' });
       }
   
       // use the model to create a new marketplace
-      const marketplace = new Marketplaces(body);
+      const marketplace = new Marketplaces({ 
+        name, 
+        description, 
+        owner: jwtPayload.sub 
+      });
       console.log(marketplace);
   
       // save the marketplace
