@@ -10,6 +10,7 @@ import marketplacesRouter from './routers/marketplacesRouter';
 import errorHandler from './middleware/errorHandler';
 import Marketplaces from './models/marketplaceModel';
 import authMiddleware from './middleware/authMiddleware';
+import sendEmail from './services/emailer';
 
 // import RSA public key
 const publicCertPath = path.join(__dirname, './certs/jwtRS256.key.pub');
@@ -33,7 +34,7 @@ const server = express();
 
 server.use(express.json());
 server.use(morgan('dev'));
-server.use('/auth', authRouter(Users, privateKey));
+server.use('/auth', authRouter(Users, privateKey, sendEmail));
 server.use('/api', exampleRouter);
 server.use(
   '/api/marketplaces', 

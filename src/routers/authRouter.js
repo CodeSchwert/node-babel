@@ -3,6 +3,7 @@ import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
 import registerSchema from '../validation/authRegisterUser';
 import loginSchema from '../validation/authLoginUser';
+import sendEmail from '../services/emailer';
 
 const authRouter = (Users, privateKey) => {
   const router = Router();
@@ -34,6 +35,17 @@ const authRouter = (Users, privateKey) => {
       });
   
       await user.save();
+
+      // send a success email
+      const sub = 'Bazaar App - User Registration Successful';
+      const msg = `
+        Hi ${username},
+        You have successfully registered with the Bazaar App.
+        Thanks!
+      `;
+
+      const mailStatus = await sendEmail([email], sub, msg);
+      console.log('register user email', mailStatus);
   
       return res.status(201).json({ success: true });
     } catch (e) {
